@@ -18,7 +18,6 @@ public class Inventory : SerializedMonoBehaviour
             _items.Add(item, 0);
         }
         _items[item] += amount;
-        print($"{item.Name} - {_items[item]}");
     }
 
     public void RemoveItem(Item item, int amount = 1)

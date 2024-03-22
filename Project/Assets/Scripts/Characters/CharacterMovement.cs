@@ -5,6 +5,7 @@ public class CharacterMovement : MonoBehaviour
 {
     [SerializeField] private PlayableCharacterInputsCaster _inputCaster;
     [SerializeField] private Rigidbody2D _rigidbody;
+    private Vector3 _scale;
 
     private void Awake()
     {
@@ -16,6 +17,7 @@ public class CharacterMovement : MonoBehaviour
         {
             _rigidbody = GetComponent<Rigidbody2D>();
         }
+        _scale = transform.localScale;
     }
 
     private void OnEnable()
@@ -31,5 +33,10 @@ public class CharacterMovement : MonoBehaviour
     private void UpdateMovement(Vector2 vector)
     {
         _rigidbody.velocity = 5 * vector;
+        if (vector.x != 0)
+        {
+            _scale.x = Mathf.Sign(vector.x);
+            transform.localScale = _scale;
+        }
     }
 }

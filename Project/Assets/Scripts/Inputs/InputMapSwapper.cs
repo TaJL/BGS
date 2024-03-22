@@ -26,12 +26,12 @@ public class InputMapSwapper : SingletonMonoBehaviour<InputMapSwapper>
 
     private void OnEnable()
     {
-        PersonalInventory.OnVisibilityChangedEvent += ReactToMenuVisibility;
+        MenuManager.OnVisibilityChangedEvent += ReactToMenuVisibility;
     }
 
     private void OnDisable()
     {
-        PersonalInventory.OnVisibilityChangedEvent -= ReactToMenuVisibility;
+        MenuManager.OnVisibilityChangedEvent -= ReactToMenuVisibility;
     }
 
     private void ReactToMenuVisibility(bool isMenuVisible)

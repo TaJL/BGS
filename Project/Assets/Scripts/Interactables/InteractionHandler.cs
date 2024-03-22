@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class InteractionHandler : MonoBehaviour
+public class InteractionHandler : SerializedMonoBehaviour
 {
     [SerializeField] private PlayableCharacterInputsCaster _inputCaster;
     [SerializeField] private List<IInteractable> _interactables;
