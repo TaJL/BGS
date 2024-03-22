@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour
+public class Inventory : SerializedMonoBehaviour
 {
     [SerializeField] private Dictionary<Item, int> _items;
 
