@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using ReusedCode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -24,6 +22,28 @@ public class InputMapSwapper : SingletonMonoBehaviour<InputMapSwapper>
             return;
         }
         SwapToCharacterMap();
+    }
+
+    private void OnEnable()
+    {
+        PersonalInventory.OnVisibilityChangedEvent += ReactToMenuVisibility;
+    }
+
+    private void OnDisable()
+    {
+        PersonalInventory.OnVisibilityChangedEvent -= ReactToMenuVisibility;
+    }
+
+    private void ReactToMenuVisibility(bool isMenuVisible)
+    {
+        if (isMenuVisible)
+        {
+            SwapToMenuMap();
+        }
+        else
+        {
+            SwapToCharacterMap();
+        }
     }
 
     private void SwapToCharacterMap()

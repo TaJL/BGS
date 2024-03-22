@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayableCharacterInputsCaster : InputMapCaster
 {
+    public static Action OnInventoryEvent;
     public Action<Vector2> OnMovementChangedEvent;
     public Action OnInteractEvent;
 
@@ -13,6 +14,7 @@ public class PlayableCharacterInputsCaster : InputMapCaster
 
     private const string MOVEMENT = "Movement";
     private const string INTERACT = "Interact";
+    private const string INVENTORY = "Inventory";
 
     void Start()
     {
@@ -36,15 +38,21 @@ public class PlayableCharacterInputsCaster : InputMapCaster
         SubscribeToAction(MOVEMENT, InputActionPhase.Performed, OnMovementChanged);
 
         SubscribeToAction(INTERACT, InputActionPhase.Performed, OnInteractPerformed);
+        SubscribeToAction(INVENTORY, InputActionPhase.Performed, OnInventoryPerformed);
     }
 
     private void OnDisable()
     {
+        if (playerInput == null)
+        {
+            return;
+        }
         UnsubscribeToAction(MOVEMENT, InputActionPhase.Started, OnMovementChanged);
         UnsubscribeToAction(MOVEMENT, InputActionPhase.Canceled, OnMovementChanged);
         UnsubscribeToAction(MOVEMENT, InputActionPhase.Performed, OnMovementChanged);
 
         UnsubscribeToAction(INTERACT, InputActionPhase.Performed, OnInteractPerformed);
+        UnsubscribeToAction(INVENTORY, InputActionPhase.Performed, OnInventoryPerformed);
     }
 
     private void OnMovementChanged(InputAction.CallbackContext context)
@@ -55,5 +63,10 @@ public class PlayableCharacterInputsCaster : InputMapCaster
     private void OnInteractPerformed(InputAction.CallbackContext context)
     {
         OnInteractEvent?.Invoke();
+    }
+
+    private void OnInventoryPerformed(InputAction.CallbackContext context)
+    {
+        OnInventoryEvent?.Invoke();
     }
 }
