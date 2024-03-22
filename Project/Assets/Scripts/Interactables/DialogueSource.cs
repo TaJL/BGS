@@ -7,7 +7,7 @@ public class DialogueSource : MonoBehaviour, IInteractable
         return true;
     }
 
-    public void Interact()
+    public void Interact(InteractionHandler handler)
     {
         print(name);
     }

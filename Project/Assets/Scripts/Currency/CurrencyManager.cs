@@ -15,7 +15,7 @@ public class CurrencyManager : SingletonMonoBehaviour<CurrencyManager>
         return itemValue <= _value;
     }
 
-    private void Modify(int delta)
+    public void Modify(int delta)
     {
         if (delta < 0)
         {

@@ -34,7 +34,7 @@ public class InteractionHandler : MonoBehaviour
             {
                 continue;
             }
-            _interactables[i].Interact();
+            _interactables[i].Interact(this);
             break;
         }
     }
