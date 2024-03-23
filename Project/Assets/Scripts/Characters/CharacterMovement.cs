@@ -5,7 +5,10 @@ public class CharacterMovement : MonoBehaviour
 {
     [SerializeField] private PlayableCharacterInputsCaster _inputCaster;
     [SerializeField] private Rigidbody2D _rigidbody;
+    [SerializeField] private Animator _animator;
+    [SerializeField] private string _walkingAnimationParameter = "IsWalking";
     private Vector3 _scale;
+    private Vector2 _velocity;
 
     private void Awake()
     {
@@ -16,6 +19,10 @@ public class CharacterMovement : MonoBehaviour
         if (_rigidbody == null)
         {
             _rigidbody = GetComponent<Rigidbody2D>();
+        }
+        if (_animator == null)
+        {
+            _animator = GetComponent<Animator>();
         }
         _scale = transform.localScale;
     }
@@ -32,11 +39,22 @@ public class CharacterMovement : MonoBehaviour
 
     private void UpdateMovement(Vector2 vector)
     {
-        _rigidbody.velocity = 5 * vector;
-        if (vector.x != 0)
+        _velocity = 5 * vector;
+        FlipCheck(vector.x);
+        _animator?.SetBool(_walkingAnimationParameter, vector.magnitude > Mathf.Epsilon);
+    }
+
+    private void FlipCheck(float direction)
+    {
+        if (direction != 0)
         {
-            _scale.x = Mathf.Sign(vector.x);
+            _scale.x = Mathf.Sign(direction);
             transform.localScale = _scale;
         }
+    }
+
+    private void FixedUpdate()
+    {
+        _rigidbody.velocity = _velocity;    
     }
 }

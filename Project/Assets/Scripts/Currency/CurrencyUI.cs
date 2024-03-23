@@ -64,7 +64,6 @@ public class CurrencyUI : MonoBehaviour
 
     private void UpdateDeltaLaberAlpha(float alpha)
     {
-        print(alpha);
         Color color = _deltaLabel.color;
         color.a = alpha;
         _deltaLabel.color = color;

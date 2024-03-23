@@ -28,9 +28,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             ""id"": ""a1739305-d357-4b05-985d-e4185d5edcc7"",
             ""actions"": [
                 {
-                    ""name"": ""New action"",
+                    ""name"": ""Return"",
                     ""type"": ""Button"",
-                    ""id"": ""b1623a90-daef-470e-b181-d3feb19e5929"",
+                    ""id"": ""957b59e8-5d5d-4c50-91dc-763b9e374480"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -40,12 +40,23 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""6b6d1319-76cd-4ace-ba3d-6bb0ace91b1c"",
-                    ""path"": """",
+                    ""id"": ""b42f67f5-669c-4374-8baa-3de80750f15c"",
+                    ""path"": ""<Gamepad>/start"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Return"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""efd400bd-a0ef-4a5a-93ba-f890ade9861b"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Return"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -252,7 +263,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""9018eebc-6045-4b0d-a435-cf4a3544c48f"",
-                    ""path"": ""<Keyboard>/i"",
+                    ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -267,7 +278,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
 }");
         // Menu
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
-        m_Menu_Newaction = m_Menu.FindAction("New action", throwIfNotFound: true);
+        m_Menu_Return = m_Menu.FindAction("Return", throwIfNotFound: true);
         // Character
         m_Character = asset.FindActionMap("Character", throwIfNotFound: true);
         m_Character_Interact = m_Character.FindAction("Interact", throwIfNotFound: true);
@@ -334,12 +345,12 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     // Menu
     private readonly InputActionMap m_Menu;
     private List<IMenuActions> m_MenuActionsCallbackInterfaces = new List<IMenuActions>();
-    private readonly InputAction m_Menu_Newaction;
+    private readonly InputAction m_Menu_Return;
     public struct MenuActions
     {
         private @Controls m_Wrapper;
         public MenuActions(@Controls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Newaction => m_Wrapper.m_Menu_Newaction;
+        public InputAction @Return => m_Wrapper.m_Menu_Return;
         public InputActionMap Get() { return m_Wrapper.m_Menu; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -349,16 +360,16 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_MenuActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_MenuActionsCallbackInterfaces.Add(instance);
-            @Newaction.started += instance.OnNewaction;
-            @Newaction.performed += instance.OnNewaction;
-            @Newaction.canceled += instance.OnNewaction;
+            @Return.started += instance.OnReturn;
+            @Return.performed += instance.OnReturn;
+            @Return.canceled += instance.OnReturn;
         }
 
         private void UnregisterCallbacks(IMenuActions instance)
         {
-            @Newaction.started -= instance.OnNewaction;
-            @Newaction.performed -= instance.OnNewaction;
-            @Newaction.canceled -= instance.OnNewaction;
+            @Return.started -= instance.OnReturn;
+            @Return.performed -= instance.OnReturn;
+            @Return.canceled -= instance.OnReturn;
         }
 
         public void RemoveCallbacks(IMenuActions instance)
@@ -440,7 +451,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     public CharacterActions @Character => new CharacterActions(this);
     public interface IMenuActions
     {
-        void OnNewaction(InputAction.CallbackContext context);
+        void OnReturn(InputAction.CallbackContext context);
     }
     public interface ICharacterActions
     {
