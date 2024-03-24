@@ -1,10 +1,16 @@
+using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class Inventory : SerializedMonoBehaviour
 {
+    public Action<Item, int> OnItemUpdate;
+
+    public Dictionary<Item, int> Items => _items;
+
     [SerializeField] private Dictionary<Item, int> _items;
+    [SerializeField] private int _maxSize = 16;
 
     private void Awake()
     {
@@ -18,6 +24,13 @@ public class Inventory : SerializedMonoBehaviour
             _items.Add(item, 0);
         }
         _items[item] += amount;
+        OnItemUpdate?.Invoke(item, _items[item]);
+    }
+
+    public bool CanAddItem()
+    {
+        return  _items == null ||
+                _items.Count >= _maxSize;
     }
 
     public void RemoveItem(Item item, int amount = 1)
@@ -27,6 +40,7 @@ public class Inventory : SerializedMonoBehaviour
             return;
         }
         _items[item] -= amount;
+        OnItemUpdate?.Invoke(item, _items[item]);
         if (_items[item] <= 0)
         {
             _items.Remove(item);
