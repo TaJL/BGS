@@ -6,8 +6,8 @@ public class MenuManager : MonoBehaviour
     public static Action<bool> OnVisibilityChangedEvent;
 
     [SerializeField] private GameObject _container;
-    [SerializeField] private GameObject _equipmentMenu;
     [SerializeField] private GameObject _shopMenu;
+    [SerializeField] private ItemUI _item;
 
     private void OnEnable()
     {
@@ -23,18 +23,21 @@ public class MenuManager : MonoBehaviour
 
     private void ShowPersonalInventory()
     {
-        _shopMenu?.SetActive(false);
-        _equipmentMenu?.SetActive(true);
-        Show();
+        Show(false);
     }
 
     private void ShowShop(Shop shop)
     {
-        _shopMenu?.SetActive(true);
-        _equipmentMenu?.SetActive(false);
-        Show();
+        Show(true);
     }
     
+    private void Show(bool isShop)
+    {
+        _shopMenu?.SetActive(isShop);
+        _item.SetAction(isShop);
+        Show();
+    }
+
     private void Show()
     {
         _container?.SetActive(true);

@@ -14,7 +14,16 @@ public class Equipment : SerializedMonoBehaviour
         _equippedItems ??= new Dictionary<EItemSlot, Item>();
     }
 
-    [Button]
+    private void OnEnable()
+    {
+        ItemUI.OnEquipItemEvent += Equip;
+    }
+
+    private void OnDisable()
+    {
+        ItemUI.OnEquipItemEvent -= Equip;
+    }
+
     private void Equip(Item item)
     {
         if (item == null ||
@@ -33,7 +42,6 @@ public class Equipment : SerializedMonoBehaviour
         UpdateSlot(item.Slot, item);
     }
 
-    [Button]
     private void Remove(EItemSlot slot)
     {
         UpdateSlot(slot, null);
