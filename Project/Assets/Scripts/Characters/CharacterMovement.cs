@@ -1,14 +1,17 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayableCharacterInputsCaster))]
 public class CharacterMovement : MonoBehaviour
 {
+    public Action<bool> OnIsWalkingEvent;
+
     [SerializeField] private PlayableCharacterInputsCaster _inputCaster;
     [SerializeField] private Rigidbody2D _rigidbody;
-    [SerializeField] private Animator _animator;
-    [SerializeField] private string _walkingAnimationParameter = "IsWalking";
+    [SerializeField] private float _speed;
     private Vector3 _scale;
     private Vector2 _velocity;
+    private bool _wasWalking;
 
     private void Awake()
     {
@@ -19,10 +22,6 @@ public class CharacterMovement : MonoBehaviour
         if (_rigidbody == null)
         {
             _rigidbody = GetComponent<Rigidbody2D>();
-        }
-        if (_animator == null)
-        {
-            _animator = GetComponent<Animator>();
         }
         _scale = transform.localScale;
     }
@@ -39,9 +38,15 @@ public class CharacterMovement : MonoBehaviour
 
     private void UpdateMovement(Vector2 vector)
     {
-        _velocity = 5 * vector;
+        bool isWalking = vector.magnitude > Mathf.Epsilon;
+        
+        _velocity = _speed * vector;
         FlipCheck(vector.x);
-        _animator?.SetBool(_walkingAnimationParameter, vector.magnitude > Mathf.Epsilon);
+        if (_wasWalking != isWalking)
+        {
+            OnIsWalkingEvent?.Invoke(isWalking);
+        }
+        _wasWalking = isWalking;
     }
 
     private void FlipCheck(float direction)
@@ -55,6 +60,6 @@ public class CharacterMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _rigidbody.velocity = _velocity;    
+        _rigidbody.velocity = _velocity;
     }
 }
