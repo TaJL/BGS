@@ -16,6 +16,9 @@ public class ItemUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _buttonText;
     [SerializeField] private EitemAction _action;
     private Item _item;
+    private int _price;
+    private bool _canSell;
+    private const float SELLER_OVERPRICE_PERCENTAGE = 1.2f; //TODO: this should be editable later
 
     private enum EitemAction
     {
@@ -27,75 +30,72 @@ public class ItemUI : MonoBehaviour
 
     private void OnEnable()
     {
-        InventoryItemUI.OnSelectedEvent += UpdateData;
+        ShopItemUI.OnSelectedEvent += SetShopItem;
+        InventoryItemUI.OnSelectedEvent += SetOwnedItem;
+        Inventory.OnItemUpdate += CheckForSellPermition;
+
+        SetItem(null);
     }
 
     private void OnDisable()
     {
-        InventoryItemUI.OnSelectedEvent -= UpdateData;
+        ShopItemUI.OnSelectedEvent -= SetShopItem;
+        InventoryItemUI.OnSelectedEvent -= SetOwnedItem;
+        Inventory.OnItemUpdate -= CheckForSellPermition;
     }
 
-    private void UpdateData(Item item)
+    private void CheckForSellPermition(Item item, int amount)
+    {
+        if (_item == item &&
+            _action == EitemAction.SELL &&
+            amount <= 0)
+        {
+            _canSell = false;
+            UpdateInteractivity();
+        }
+    }
+
+    private void SetShopItem(Item item)
+    {
+        _action = EitemAction.BUY;
+        _price = Mathf.RoundToInt(item.FairPrice * SELLER_OVERPRICE_PERCENTAGE);
+        SetItem(item);
+    }
+
+    private void SetOwnedItem(Item item)
+    {
+        _action = EitemAction.SELL;
+        _price = item.FairPrice;
+        _canSell = true;
+        SetItem(item);
+    }
+
+    private void SetItem(Item item)
     {
         _item = item;
+        if (item == null)
+        {
+            _icon.enabled = false;
+            _name.text = "";
+            _flavor.text = "";
+            _button.interactable = false;
+            _buttonText.text = "";
+            return;
+        }
         _name.text = item.Name;
         if (_icon.enabled == false)
         {
             _icon.enabled = true;
         }
         _icon.sprite = item.Icon;
-        _flavor.text = $"Price: ${item.FairPrice}\n{item.FlavorText}";
-        switch (_action)
-        {
-            case EitemAction.BUY:
-            {
-                break;
-            }
-            case EitemAction.EQUIP:
-            {
-                bool canBeEquipped = item.CanBeEquipped();
-                _button.interactable = canBeEquipped;
-                _buttonText.text = canBeEquipped ? "Equip" : "";
-                break;
-            }
-            case EitemAction.SELL:
-            {
-                break;
-            }
-        }
+        _flavor.text = $"Price: ${_price}\n{item.FlavorText}";
+
+        UpdateInteractivity();
     }
 
     public void SetAction(bool isShop)
     {
-        SetAction(isShop ? EitemAction.SELL : EitemAction.EQUIP);
-    }
-
-    private void SetAction(EitemAction action)
-    {
-        _action = action;
-        switch (action)
-        {
-            case EitemAction.NONE:
-            {
-                _buttonText.text = "";
-                break;
-            }
-            case EitemAction.BUY:
-            {
-                _buttonText.text = "Buy";
-                break;
-            }
-            case EitemAction.EQUIP:
-            {
-                _buttonText.text = "Equip";
-                break;
-            }
-            case EitemAction.SELL:
-            {
-                _buttonText.text = "Sell";
-                break;
-            }
-        }
+        _action = isShop ? EitemAction.BUY : EitemAction.EQUIP;
     }
 
     public void OnConfirmAction()
@@ -104,7 +104,9 @@ public class ItemUI : MonoBehaviour
         {
             case EitemAction.BUY:
             {
+                CurrencyManager.Instance.Modify(-Mathf.RoundToInt(_item.FairPrice * SELLER_OVERPRICE_PERCENTAGE));
                 OnBuyItemEvent?.Invoke(_item);
+                UpdateInteractivity();
                 break;
             }
             case EitemAction.EQUIP:
@@ -114,9 +116,40 @@ public class ItemUI : MonoBehaviour
             }
             case EitemAction.SELL:
             {
+                CurrencyManager.Instance.Modify(_item.FairPrice);
                 OnSellItemEvent?.Invoke(_item);
+                UpdateInteractivity();
                 break;
             }
         }
+    }
+
+    private void UpdateInteractivity()
+    {
+        bool canInteract = false;
+        string buttonText = "";
+        switch (_action)
+        {
+            case EitemAction.BUY:
+            {
+                canInteract = CurrencyManager.Instance.CanBuy(Mathf.RoundToInt(_item.FairPrice * SELLER_OVERPRICE_PERCENTAGE));
+                buttonText = "Buy";
+                break;
+            }
+            case EitemAction.EQUIP:
+            {
+                canInteract = _item.CanBeEquipped();
+                buttonText = "Equip";
+                break;
+            }
+            case EitemAction.SELL:
+            {
+                canInteract = _canSell;
+                buttonText = "Sell";
+                break;
+            }
+        }
+        _button.interactable = canInteract;
+        _buttonText.text = canInteract ? buttonText : "";
     }
 }

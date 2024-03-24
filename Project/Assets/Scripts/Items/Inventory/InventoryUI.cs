@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +15,24 @@ public class InventoryUI : MonoBehaviour
 
     private void OnEnable()
     {
+        UpdateVisual();
+        ItemUI.OnBuyItemEvent += UpdateVisual;
+        ItemUI.OnSellItemEvent += UpdateVisual;
+    }
+
+    private void OnDisable()
+    {
+        ItemUI.OnBuyItemEvent -= UpdateVisual;
+        ItemUI.OnSellItemEvent -= UpdateVisual;
+    }
+
+    private void UpdateVisual(Item item)
+    {
+        UpdateVisual();
+    }
+
+    private void UpdateVisual()
+    {
         int i = 0;
         foreach (KeyValuePair<Item, int> item in _inventory.Items)
         {
@@ -25,10 +44,5 @@ public class InventoryUI : MonoBehaviour
         {
             _items[j].SetItem(null, 0);
         }
-    }
-
-    private void UpdateVisual()
-    {
-        
     }
 }

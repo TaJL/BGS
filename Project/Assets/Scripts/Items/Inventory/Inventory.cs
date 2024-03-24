@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Inventory : SerializedMonoBehaviour
 {
-    public Action<Item, int> OnItemUpdate;
+    public static Action<Item, int> OnItemUpdate;
 
     public Dictionary<Item, int> Items => _items;
 
@@ -17,7 +17,24 @@ public class Inventory : SerializedMonoBehaviour
         _items = new Dictionary<Item, int>();
     }
 
-    public void AddItem(Item item, int amount = 1)
+    private void OnEnable()
+    {
+        ItemUI.OnBuyItemEvent += AddItem;
+        ItemUI.OnSellItemEvent += RemoveItem;
+    }
+
+    private void OnDisable()
+    {
+        ItemUI.OnBuyItemEvent -= AddItem;
+        ItemUI.OnSellItemEvent -= RemoveItem;
+    }
+
+    public void AddItem(Item item)
+    {
+        AddItem(item, 1);
+    }
+
+    private void AddItem(Item item, int amount)
     {
         if (ContainsItem(item) == false)
         {
@@ -33,7 +50,12 @@ public class Inventory : SerializedMonoBehaviour
                 _items.Count >= _maxSize;
     }
 
-    public void RemoveItem(Item item, int amount = 1)
+    private void RemoveItem(Item item)
+    {
+        RemoveItem(item, 1);
+    }
+
+    public void RemoveItem(Item item, int amount)
     {
         if (ContainsItem(item) == false)
         {

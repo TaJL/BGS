@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using System;
 
 public class CurrencyUI : MonoBehaviour
 {
@@ -12,6 +11,9 @@ public class CurrencyUI : MonoBehaviour
     [SerializeField, Tooltip("It adapts to show big variations for longer.")] private float _baseAnimation;
     [SerializeField] private Color _gainColor;
     [SerializeField] private Color _lossColor;
+    [SerializeField] private AudioClip[] _variationClips;
+    [SerializeField] private AudioSource _audioSource;
+    
     private int _value;
 
     private void Awake()
@@ -19,7 +21,11 @@ public class CurrencyUI : MonoBehaviour
         if (_valueLabel == null)
         {
             _valueLabel = GetComponent<TextMeshProUGUI>();
-        }    
+        }
+        if (_audioSource == null)
+        {
+            _audioSource = GetComponent<AudioSource>();
+        }
     }
 
     private void OnEnable()
@@ -54,12 +60,19 @@ public class CurrencyUI : MonoBehaviour
 
     private void UpdateLabel(float value)
     {
-        if (_valueLabel == null)
+        if (_valueLabel == null ||
+            Mathf.RoundToInt(value) == _value)
         {
             return;
         }
         _value = Mathf.RoundToInt(value);
         _valueLabel.text = $"$ {_value}";
+        if (_audioSource.isPlaying == false)
+        {
+            _audioSource.clip = _variationClips[Random.Range(0, _variationClips.Length)];
+            _audioSource.pitch = Random.Range(0.9f, 1.1f);
+            _audioSource.Play();
+        }
     }
 
     private void UpdateDeltaLaberAlpha(float alpha)
