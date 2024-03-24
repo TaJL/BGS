@@ -104,6 +104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2adcae177eb6f7c43b1253bdfa77dc44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerInput: {fileID: 4667879593035457886}
   _container: {fileID: 0}
   _shopMenu: {fileID: 0}
   _item: {fileID: 0}

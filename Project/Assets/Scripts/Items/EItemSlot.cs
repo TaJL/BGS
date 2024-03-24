@@ -2,5 +2,6 @@ public enum EItemSlot
 {
     NONE = 0,
     HELMET = 1,
-    ARMOR = 2,
+    TORSO = 2,
+    FEET = 3,
 }

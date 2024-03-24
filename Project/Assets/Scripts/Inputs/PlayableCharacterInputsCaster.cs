@@ -32,7 +32,7 @@ public class PlayableCharacterInputsCaster : InputMapCaster
     }
 
     private void SubscribeToActions()
-    {   
+    {
         SubscribeToAction(MOVEMENT, InputActionPhase.Started, OnMovementChanged);
         SubscribeToAction(MOVEMENT, InputActionPhase.Canceled, OnMovementChanged);
         SubscribeToAction(MOVEMENT, InputActionPhase.Performed, OnMovementChanged);

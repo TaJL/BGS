@@ -64,7 +64,10 @@ public class ItemUI : MonoBehaviour
 
     private void SetOwnedItem(Item item)
     {
-        _action = EitemAction.SELL;
+        if (_action != EitemAction.EQUIP)
+        {
+            _action = EitemAction.SELL;
+        }
         _price = item.FairPrice;
         _canSell = true;
         SetItem(item);
